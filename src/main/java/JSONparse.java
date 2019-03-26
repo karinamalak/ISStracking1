@@ -9,11 +9,10 @@ import java.net.URL;
 import java.net.URLConnection;
 
 
-
 public class JSONparse {
 
 
-    public static JsonObject parser() throws IOException {
+    public static JsonObject parserLocation() throws IOException {
         String sURL = "http://api.open-notify.org/iss-now.json";
 
         URL url = new URL(sURL);
@@ -22,20 +21,52 @@ public class JSONparse {
         JsonParser jp = new JsonParser();
 
         JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-        JsonObject rootobj = root.getAsJsonObject();
+        // JsonObject rootobj = root.getAsJsonObject();
         return root.getAsJsonObject();
 
-        //"https://maps.googleapis.com/maps/api/geocode/json?latlng=32.263200,50.778187&key=<ENTER YOUR PLACE API KEY HEAR >"
+        //https://maps.googleapis.com/maps/api/distancematrix/json?origins=40.6655101,-73.891889&destinations=40.6655101,-73.891009&key=...
     }
 
-    public static double getLongitude(JsonObject root) {
-        JsonObject issPosition = root.get("iss_position").getAsJsonObject();
-        return Double.valueOf(issPosition.get("longitude").getAsString());
+    public static JsonObject parserPeople() throws IOException {
+        String sURL = "http://api.open-notify.org/astros.json";
+
+        URL url = new URL(sURL);
+        URLConnection request = url.openConnection();
+
+        JsonParser jp = new JsonParser();
+
+        JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+        JsonObject rootobj = root.getAsJsonObject();
+        JsonElement rootobj1 = rootobj.get("people").getAsJsonObject();
+        // System.out.println(rootobj1.get("name").getAsString());
+        return root.getAsJsonObject();
+
+        //https://maps.googleapis.com/maps/api/distancematrix/json?origins=40.6655101,-73.891889&destinations=40.6655101,-73.891009&key=...
     }
 
-    public static double getLatitude(JsonObject root) {
-        JsonObject issPosition = root.get("iss_position").getAsJsonObject();
-        return Double.valueOf(issPosition.get("latitude").getAsString());
+
+    public static double getLongitude() {
+        try {
+            JsonObject root= parserLocation();
+            JsonObject issPosition = root.get("iss_position").getAsJsonObject();
+            return Double.valueOf(issPosition.get("longitude").getAsString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public static double getLatitude() {
+        JsonObject root= null;
+        try {
+            root = parserLocation();
+            JsonObject issPosition = root.get("iss_position").getAsJsonObject();
+            return Double.valueOf(issPosition.get("latitude").getAsString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+
     }
 
     public static long getDate(JsonObject root) {
